@@ -7,7 +7,9 @@ module.exports = function (ctx) {
     // --> boot files are part of "main.js"
     boot: [
       'i18n',
-      'axios'
+      'axios',
+      'vuelidate',
+      'route-permission'
     ],
 
     css: [
@@ -16,7 +18,7 @@ module.exports = function (ctx) {
 
     extras: [
       // 'ionicons-v4',
-      // 'mdi-v3',
+      'mdi-v3',
       // 'fontawesome-v5',
       // 'eva-icons',
       // 'themify',
@@ -27,8 +29,8 @@ module.exports = function (ctx) {
     ],
 
     framework: {
-      // iconSet: 'ionicons-v4',
-      // lang: 'de', // Quasar language
+      iconSet: 'mdi-v3',
+      lang: 'zh-hans', // Quasar language
 
       // all: true, // --- includes everything; for dev only!
 
@@ -45,40 +47,100 @@ module.exports = function (ctx) {
         'QList',
         'QItem',
         'QItemSection',
-        'QItemLabel'
+        'QItemLabel',
+        'QCard',
+        'QCardSection',
+        'QCardActions',
+        'QImg',
+        'QExpansionItem',
+        'QSelect',
+        'QInput',
+        'QRadio',
+        'QCheckbox',
+        'QToggle',
+        'QOptionGroup',
+        'QTime',
+        'QDate',
+        'QBadge',
+        'QCarousel',
+        'QCarouselControl',
+        'QCarouselSlide',
+        'QChatMessage',
+        'QDialog',
+        'QMenu',
+        'QPagination',
+        'QSeparator',
+        'QTable',
+        'QTh',
+        'QTr',
+        'QTd',
+        'QUploader'
       ],
 
       directives: [
-        'Ripple'
+        'Ripple',
+        'ClosePopup'
       ],
 
       // Quasar plugins
       plugins: [
-        'Notify'
-      ]
+        'Notify',
+        'LocalStorage',
+        'SessionStorage',
+        'Dialog',
+        'AppFullscreen',
+        'Loading'
+      ],
+      config: {
+        notify: {
+          position: 'top-right',
+          timeout: 1500
+        },
+        cordova: {
+          iosStatusBarPadding: true, // add the dynamic top padding on iOS mobile devices
+          backButtonExit: false  // Quasar handles app exit on mobile phone back button
+        }
+      },
     },
 
     supportIE: true,
 
     build: {
       scopeHoisting: true,
-      // vueRouterMode: 'history',
+      vueRouterMode: 'hash',
       // vueCompiler: true,
       // gzip: true,
       // analyze: true,
       // extractCSS: false,
-      extendWebpack (cfg) {
-      }
+      extendWebpack(cfg) {
+      },
+      env: ctx.dev
+        ? { // so on dev we'll have
+          API: JSON.stringify('/api')
+        }
+        : { // and on build (production):
+          API: JSON.stringify('https://ims-backend.beyond-itservice.com')
+        }
     },
 
     devServer: {
       // https: true,
-      // port: 8080,
-      open: true // opens browser window automatically
+      port: 9090,
+      open: true,// opens browser window automatically
+      proxy: {
+        // proxy all requests starting with /api to jsonplaceholder
+        '/api': {
+          target: 'http://localhost:8080',
+          changeOrigin: true,
+          pathRewrite: {
+            '^/api': ''
+          }
+        }
+      }
     },
 
-    // animations: 'all', // --- includes all animations
-    animations: [],
+    animations: 'all', // --- includes all animations
+    //animations: [],
 
     ssr: {
       pwa: false
@@ -133,7 +195,7 @@ module.exports = function (ctx) {
     electron: {
       // bundler: 'builder', // or 'packager'
 
-      extendWebpack (cfg) {
+      extendWebpack(cfg) {
         // do something with Electron main process Webpack cfg
         // chainWebpack also available besides this extendWebpack
       },
