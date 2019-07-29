@@ -17,7 +17,8 @@
     "vuelidate": "^0.7.4"
   },
   "devDependencies": {
-    "@quasar/app": "^1.0.4"
+    "@quasar/app": "^1.0.4",
+    "@quasar/quasar-app-extension-icon-genie": "^1.0.1"
   },
   "engines": {
     "node": ">= 8.9.0",

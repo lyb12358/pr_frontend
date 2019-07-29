@@ -37,6 +37,9 @@ module.exports = function (ctx) {
       components: [
         'QLayout',
         'QHeader',
+        'QFooter',
+        'QPageSticky',
+        'QPageScroller',
         'QDrawer',
         'QPageContainer',
         'QPage',
@@ -52,7 +55,9 @@ module.exports = function (ctx) {
         'QCardSection',
         'QCardActions',
         'QImg',
+        'QIcon',
         'QExpansionItem',
+        'QField',
         'QSelect',
         'QInput',
         'QRadio',
@@ -74,7 +79,20 @@ module.exports = function (ctx) {
         'QTh',
         'QTr',
         'QTd',
-        'QUploader'
+        'QUploader',
+        'QAvatar',
+        'QScrollArea',
+        'QFab',
+        'QFabAction',
+        'QTabs',
+        'QTab',
+        'QRouteTab',
+        'QBadge',
+        'QSpace',
+        'QChatMessage',
+        'QCarousel',
+        'QCarouselControl',
+        'QCarouselSlide'
       ],
 
       directives: [

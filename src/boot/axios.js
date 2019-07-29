@@ -29,7 +29,7 @@ service.interceptors.response.use(
     if (res.code && res.code !== 20000) {
       Notify.create({
         message: res.msg,
-        type: 'negative',
+        color: 'negative',
         position: 'top-right'
       })
 
@@ -39,7 +39,7 @@ service.interceptors.response.use(
           message: '你已被登出，可以取消继续留在该页面，或者重新登录',
           ok: '重新登录',
           cancel: '取消'
-        }).then(() => {
+        }).onOk(() => {
           store.dispatch('user/FedLogout').then(() => {
             location.reload()// 为了重新实例化vue-router对象 避免bug
           })
@@ -54,7 +54,7 @@ service.interceptors.response.use(
     console.log('err' + error)// for debug
     Notify.create({
       message: '网络异常，请联系信息中心运维部！',
-      type: 'negative',
+      color: 'negative',
       position: 'top-right'
     })
     return Promise.reject(error)
