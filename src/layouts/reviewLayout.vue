@@ -35,7 +35,7 @@
               maximized
               transition-show="slide-up"
               transition-hide="slide-down">
-      <q-card style="max-height:768px">
+      <q-card style="height:768px">
         <div class="">
           <q-carousel swipeable
                       animated
@@ -142,8 +142,6 @@ export default {
       console.log(val)
     }
   },
-  mounted() {
-    this.$q.fullscreen.request()
-  }
+  mounted() {}
 }
 </script>

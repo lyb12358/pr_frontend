@@ -2,44 +2,32 @@
   <q-layout view="hHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
-        <q-btn flat
-               dense
-               round
-               @click="leftDrawerOpen = !leftDrawerOpen"
-               aria-label="Menu">
+        <q-btn flat dense round @click="leftDrawerOpen = !leftDrawerOpen" aria-label="Menu">
           <q-icon name="menu" />
         </q-btn>
         <q-toolbar-title style="font-weight:bold">
           {{$route.meta.title}}
           <!-- <div slot="subtitle">IT Center</div> -->
         </q-toolbar-title>
-        <q-btn flat
-               label="退出"
-               @click="logout()"
-               icon="mdi-logout">
-        </q-btn>
+        <q-btn flat label="退出" @click="logout()" icon="mdi-logout"></q-btn>
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen"
-              :width="200"
-              :breakpoint="500"
-              show-if-above
-              bordered
-              content-class="bg-grey-2">
+    <q-drawer
+      v-model="leftDrawerOpen"
+      :width="200"
+      :breakpoint="1000"
+      show-if-above
+      bordered
+      content-class="bg-grey-2"
+    >
       <q-scroll-area class="fit">
-        <q-list v-for="(menuItem, index) in menuList"
-                :key="index">
-          <q-item clickable
-                  v-ripple
-                  :to="menuItem.navi"
-                  exact>
+        <q-list v-for="(menuItem, index) in menuList" :key="index">
+          <q-item clickable v-ripple :to="menuItem.navi" exact>
             <q-item-section avatar>
               <q-icon :name="menuItem.icon" />
             </q-item-section>
-            <q-item-section>
-              {{ menuItem.label }}
-            </q-item-section>
+            <q-item-section>{{ menuItem.label }}</q-item-section>
           </q-item>
           <q-separator v-if="menuItem.separator" />
         </q-list>
@@ -47,11 +35,13 @@
     </q-drawer>
 
     <q-page-container>
-      <transition enter-active-class="animated fadeIn"
-                  leave-active-class="animated fadeOut"
-                  mode="out-in"
-                  :duration="300"
-                  @leave="resetScroll">
+      <transition
+        enter-active-class="animated fadeIn"
+        leave-active-class="animated fadeOut"
+        mode="out-in"
+        :duration="300"
+        @leave="resetScroll"
+      >
         <router-view />
       </transition>
     </q-page-container>

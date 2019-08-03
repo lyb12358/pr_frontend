@@ -7,8 +7,8 @@ const routes = [
     meta: { requiresAuth: false },
     children: [
       { path: '/index', name: 'index', component: () => import('pages/index'), meta: { title: '主页', requiresAuth: false } },
-      { path: '/user', name: 'user', component: () => import('pages/user'), meta: { title: '用户', requiresAuth: true, auth: 3 } },
-      { path: '/role', name: 'role', component: () => import('pages/role'), meta: { title: '角色', requiresAuth: true, auth: 4 } },
+      { path: '/user', name: 'user', component: () => import('pages/user'), meta: { title: '用户管理', requiresAuth: true, auth: 3 } },
+      { path: '/role', name: 'role', component: () => import('pages/role'), meta: { title: '角色管理', requiresAuth: true, auth: 4 } },
       { path: '/reviewManage', name: 'reviewManage', component: () => import('pages/reviewManage'), meta: { title: '评审会管理', requiresAuth: true, auth: 7 } },
       { path: '/productManage', name: 'productManage', component: () => import('pages/productManage'), meta: { title: '产品管理', requiresAuth: true, auth: 8 } },
       { path: '/reviewData', name: 'reviewData', component: () => import('pages/reviewData'), meta: { title: '数据统计', requiresAuth: true, auth: 9 } }

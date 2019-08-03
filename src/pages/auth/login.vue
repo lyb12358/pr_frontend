@@ -1,181 +1,97 @@
 <template>
   <q-page padding>
     <div class="page">
-      <div class="content ">
-        <q-card style="position:absolute;top:-5rem;width:100%;"
-                class="no-shadow transparent">
+      <div class="content">
+        <q-card style="position:absolute;top:-5rem;width:100%;" class="no-shadow transparent">
           <q-card-section style="text-align:center;">
-            <span style="font-weight:bold;font-size:1.5rem;color:white;">
-              产品评审系统
-            </span>
-            <br>
+            <span style="font-weight:bold;font-size:1.5rem;color:white;">产品评审系统</span>
+            <br />
             <small style="color:white;">
               coded by Lyb
               <span style="color:red">♥</span>
             </small>
           </q-card-section>
         </q-card>
-        <q-card class="no-shadow ">
-          <form @submit.prevent.stop="login"
-                @reset.prevent.stop="resetLogin">
+        <q-card class="no-shadow">
+          <form @submit.prevent.stop="login" @reset.prevent.stop="resetLogin">
             <q-card-section>
-              <q-input v-model.trim="user.account"
-                       class="q-mt-lg"
-                       label="用户名"
-                       lazy-rules
-                       :rules="[ val => val && val.length > 0 || '用户名不能为空']"
-                       ref="account">
+              <q-input
+                v-model.trim="user.account"
+                autocapitalize="off"
+                autocorrect="off"
+                class="q-mt-lg"
+                label="用户名"
+                lazy-rules
+                :rules="[ val => val && val.length > 0 || '用户名不能为空']"
+                ref="account"
+              >
                 <template v-slot:prepend>
                   <q-icon name="mdi-account" />
                 </template>
               </q-input>
-              <q-input v-model.trim="user.password"
-                       label="密码"
-                       type="password"
-                       ref="password"
-                       class="q-mt-sm"
-                       lazy-rules
-                       :rules="[val => val !== null && val !== '' || '密码不能为空' ]"
-                       @keyup.enter="login">
+              <q-input
+                v-model.trim="user.password"
+                label="密码"
+                type="password"
+                ref="password"
+                class="q-mt-sm"
+                lazy-rules
+                :rules="[val => val !== null && val !== '' || '密码不能为空' ]"
+                @keyup.enter="login"
+              >
                 <template v-slot:prepend>
                   <q-icon name="mdi-textbox-password" />
                 </template>
               </q-input>
             </q-card-section>
             <q-card-actions align="right">
-              <q-btn label="重置"
-                     flat
-                     color="secondary"
-                     type="reset" />
-              <q-btn label="登录"
-                     :loading="loading"
-                     color="primary"
-                     icon="mdi-login"
-                     type="submit" />
+              <q-btn label="重置" flat color="secondary" type="reset" />
+              <q-btn label="登录" :loading="loading" color="primary" icon="mdi-login" type="submit" />
             </q-card-actions>
           </form>
         </q-card>
-        <q-card style="position:absolute;bottom:-4rem;width:100%;"
-                class="no-shadow transparent">
+        <q-card style="position:absolute;bottom:-4rem;width:100%;" class="no-shadow transparent">
           <q-card-section style="text-align:center;color:white;">
-            <small>
-              博洋家纺信息中心
-            </small>
-            <br>
-            <small>
-              IT Center of Beyond Home Textile
-            </small>
+            <small>博洋家纺信息中心</small>
+            <br />
+            <small>IT Center of Beyond Home Textile</small>
           </q-card-section>
         </q-card>
       </div>
       <div class="bg-boxes">
-        <svg width="300px"
-             height="100%"
-             id="col1">
-          <rect width="150px"
-                height="150px"
-                x="75px"
-                y="75px"
-                class="bubble"
-                id="bub1" />
+        <svg width="300px" height="100%" id="col1">
+          <rect width="150px" height="150px" x="75px" y="75px" class="bubble" id="bub1" />
         </svg>
-        <svg width="200px"
-             height="100%"
-             id="col2">
-          <rect width="100px"
-                height="100px"
-                x="50px"
-                y="50px"
-                class="bubble"
-                id="bub2" />
+        <svg width="200px" height="100%" id="col2">
+          <rect width="100px" height="100px" x="50px" y="50px" class="bubble" id="bub2" />
         </svg>
-        <svg width="260px"
-             height="100%"
-             id="col3">
-          <rect width="130px"
-                height="130px"
-                x="65px"
-                y="65px"
-                class="bubble"
-                id="bub3" />
+        <svg width="260px" height="100%" id="col3">
+          <rect width="130px" height="130px" x="65px" y="65px" class="bubble" id="bub3" />
         </svg>
-        <svg width="160px"
-             height="100%"
-             id="col4">
-          <rect width="80px"
-                height="80px"
-                x="40px"
-                y="40px"
-                class="bubble"
-                id="bub4" />
+        <svg width="160px" height="100%" id="col4">
+          <rect width="80px" height="80px" x="40px" y="40px" class="bubble" id="bub4" />
         </svg>
-        <svg width="240px"
-             height="100%"
-             id="col5">
-          <rect width="120px"
-                height="120px"
-                x="60px"
-                y="60px"
-                class="bubble"
-                id="bub5" />
+        <svg width="240px" height="100%" id="col5">
+          <rect width="120px" height="120px" x="60px" y="60px" class="bubble" id="bub5" />
         </svg>
         <!--Here is a triangle-->
-        <svg width="200px"
-             height="100%"
-             id="col6">
-          <polygon points="50,150 100,50 150,150"
-                   class="bubble"
-                   id="bub6" />
+        <svg width="200px" height="100%" id="col6">
+          <polygon points="50,150 100,50 150,150" class="bubble" id="bub6" />
         </svg>
-        <svg width="200px"
-             height="100%"
-             id="col7">
-          <rect width="100px"
-                height="100px"
-                x="50px"
-                y="50px"
-                class="bubble"
-                id="bub7" />
+        <svg width="200px" height="100%" id="col7">
+          <rect width="100px" height="100px" x="50px" y="50px" class="bubble" id="bub7" />
         </svg>
-        <svg width="200px"
-             height="100%"
-             id="col8">
-          <rect width="100px"
-                height="100px"
-                x="50px"
-                y="50px"
-                class="bubble"
-                id="bub8" />
+        <svg width="200px" height="100%" id="col8">
+          <rect width="100px" height="100px" x="50px" y="50px" class="bubble" id="bub8" />
         </svg>
-        <svg width="200px"
-             height="100%"
-             id="col9">
-          <rect width="100px"
-                height="100px"
-                x="50px"
-                y="50px"
-                class="bubble"
-                id="bub9" />
+        <svg width="200px" height="100%" id="col9">
+          <rect width="100px" height="100px" x="50px" y="50px" class="bubble" id="bub9" />
         </svg>
-        <svg width="200px"
-             height="100%"
-             id="col10">
-          <rect width="100px"
-                height="100px"
-                x="50px"
-                y="50px"
-                class="bubble"
-                id="bub10" />
+        <svg width="200px" height="100%" id="col10">
+          <rect width="100px" height="100px" x="50px" y="50px" class="bubble" id="bub10" />
         </svg>
-        <svg width="100px"
-             height="100%"
-             id="col11">
-          <rect width="50px"
-                height="50px"
-                x="25px"
-                y="25px"
-                class="bubble"
-                id="bub11" />
+        <svg width="100px" height="100%" id="col11">
+          <rect width="50px" height="50px" x="25px" y="25px" class="bubble" id="bub11" />
         </svg>
       </div>
     </div>

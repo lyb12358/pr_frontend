@@ -7,9 +7,9 @@
         <q-card class="my-card">
 
           <q-img src="/assets/cstp.png">
-            <q-icon :name="prod.icon"
+            <!-- <q-icon :name="prod.icon"
                     :color="prod.color"
-                    style="font-size: 4rem;" />
+                    style="font-size: 4rem;" /> -->
             <div class="absolute-bottom row items-center no-wrap"
                  style="height:40px">
               <div class="col text-subtitle2">
@@ -101,9 +101,7 @@ export default {
     }
   },
   methods: {},
-  mounted() {
-    this.$q.fullscreen.request()
-  }
+  mounted() {}
 }
 </script>
 

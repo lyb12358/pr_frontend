@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <div class="q-pa-md">
+    <div class="q-pa-sm">
       <q-table class="my-sticky-header-table"
                style="max-height:100%"
                title="数据分析"
@@ -171,21 +171,4 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-.my-sticky-header-table
-  /* max height is important */
-  .q-table__middle
-    min-height 100%
-  .q-table__top, .q-table__bottom, thead tr:first-child th
-    background-color #c1f4cd
-  thead tr:first-child th
-    position sticky
-    top 0
-    opacity 1
-    z-index 1
-  thead tr:last-child th
-    position sticky
-    top 0
-    opacity 1
-    z-index 1
-</style>
+<style lang="stylus"></style>

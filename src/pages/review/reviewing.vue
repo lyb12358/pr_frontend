@@ -32,7 +32,7 @@
               maximized
               transition-show="slide-up"
               transition-hide="slide-down">
-      <q-card style="background:url(/statics/cstp.png) no-repeat;max-height:768px">
+      <q-card style="background:url(/statics/cstp.png) no-repeat;height:768px">
         <q-card-section class="row items-center">
           <!-- <q-space /> -->
           <q-btn icon="close"
@@ -40,8 +40,6 @@
                  round
                  dense
                  v-close-popup />
-        </q-card-section>
-        <q-card-section>
         </q-card-section>
       </q-card>
       <div class="q-pa-xs row items-start q-gutter-xs">
@@ -111,7 +109,6 @@
                    @click="notify('positive','已提交结果')">提交结果</q-btn>
           </q-card-actions>
         </q-card>
-
       </div>
     </q-dialog>
     <q-dialog v-model="prodOpinionOpened"
@@ -239,16 +236,12 @@ export default {
     },
     openProdDetailDialog() {
       this.prodDetailOpened = true
-      this.$q.fullscreen.request()
     },
     openOpinionDialog() {
       this.prodOpinionOpened = true
-      this.$q.fullscreen.request()
     }
   },
-  mounted() {
-    this.$q.fullscreen.request()
-  }
+  mounted() {}
 }
 </script>
 

@@ -8,8 +8,7 @@
         </q-card-section>
         <q-separator />
         <q-card-actions align="right">
-          <q-btn flat
-                 to="/review/reviewing">参加评审</q-btn>
+          <q-btn flat to="/review/reviewing">参加评审</q-btn>
         </q-card-actions>
       </q-card>
     </div>
@@ -21,9 +20,10 @@
 
 <script>
 export default {
-  mounted() {
-    this.$q.fullscreen.exit()
-  }
+  data() {
+    return {}
+  },
+  mounted() {}
 }
 </script>
 <style lang="stylus" scoped>
