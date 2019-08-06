@@ -22,6 +22,12 @@ export const maintainProductPermission = (state) => {
 export const userInfo = (state) => {
   return state.userInfo
 }
-export const brandColor = (state) => {
-  return state.brandColor
+export const rp = (state) => {
+  return state.rp
+}
+export const rs = (state) => {
+  return state.rs
+}
+export const compareProdList = (state) => {
+  return state.compareProdList
 }

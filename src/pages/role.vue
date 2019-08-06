@@ -39,7 +39,7 @@
           </q-tr>
           <q-tr v-show="props.expand" :props="props">
             <q-td colspan="100%">
-              <div class="text-left"></div>
+              <div class="text-left">无操作</div>
             </q-td>
           </q-tr>
         </template>

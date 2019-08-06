@@ -4,7 +4,7 @@
       <div class="content">
         <q-card style="position:absolute;top:-5rem;width:100%;" class="no-shadow transparent">
           <q-card-section style="text-align:center;">
-            <span style="font-weight:bold;font-size:1.5rem;color:white;">产品评审系统</span>
+            <span style="font-weight:bold;font-size:1.5rem;color:white;">产品评审模块</span>
             <br />
             <small style="color:white;">
               coded by Lyb
@@ -16,13 +16,15 @@
           <form @submit.prevent.stop="login" @reset.prevent.stop="resetLogin">
             <q-card-section>
               <q-input
-                v-model.trim="user.account"
-                autocapitalize="off"
                 autocorrect="off"
+                autocapitalize="off"
+                autocomplete="off"
+                spellcheck="false"
+                v-model.trim="user.account"
                 class="q-mt-lg"
                 label="用户名"
                 lazy-rules
-                :rules="[ val => val && val.length > 0 || '用户名不能为空']"
+                :rules="[ val => val && val.length > 0 || '账号不能为空']"
                 ref="account"
               >
                 <template v-slot:prepend>
@@ -30,6 +32,10 @@
                 </template>
               </q-input>
               <q-input
+                autocorrect="off"
+                autocapitalize="off"
+                autocomplete="off"
+                spellcheck="false"
                 v-model.trim="user.password"
                 label="密码"
                 type="password"

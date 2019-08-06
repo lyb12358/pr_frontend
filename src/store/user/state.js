@@ -8,5 +8,7 @@ export default {
   updateStylePermission: [],
   maintainProductPermission: [],
   userInfo: {},
-  brandColor: 'light-green-6'
+  rp: '',
+  rs: '',
+  compareProdList: []
 }

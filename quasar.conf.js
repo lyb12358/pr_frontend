@@ -92,7 +92,11 @@ module.exports = function (ctx) {
         'QChatMessage',
         'QCarousel',
         'QCarouselControl',
-        'QCarouselSlide'
+        'QCarouselSlide',
+        'QBtnGroup',
+        'QBtnDropdown',
+        'QForm',
+        'QUploader'
       ],
 
       directives: [
@@ -111,8 +115,8 @@ module.exports = function (ctx) {
       ],
       config: {
         notify: {
-          position: 'top-right',
-          timeout: 1500
+          position: 'right',
+          timeout: 2000
         },
         cordova: {
           iosStatusBarPadding: true, // add the dynamic top padding on iOS mobile devices

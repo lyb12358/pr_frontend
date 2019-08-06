@@ -22,6 +22,25 @@ export const SetMaintainProductPermission = (state, maintainProductPermission) =
 export const SetUserInfo = (state, userInfo) => {
   state.userInfo = userInfo
 }
-export const SetBrandColor = (state, brandColor) => {
-  state.brandColor = brandColor
+export const SetRp = (state, rp) => {
+  state.rp = rp
+}
+export const SetRs = (state, rs) => {
+  state.rs = rs
+}
+export const AddCompareProdList = (state, prod) => {
+  for (let i = 0; i < state.compareProdList.length; i++) {
+    if (state.compareProdList[i].id == prod.id) {
+      return
+    }
+  }
+  state.compareProdList.push(prod)
+}
+export const ReduceCompareProdList = (state, id) => {
+  for (let i = 0; i < state.compareProdList.length; i++) {
+    if (state.compareProdList[i].id == id) {
+      state.compareProdList.splice(i, 1)
+    }
+  }
+
 }

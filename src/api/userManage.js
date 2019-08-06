@@ -15,7 +15,21 @@ export function updatePassword(id, password) {
         method: 'get'
     })
 }
-
+//获取用户
+export function getUserById(id) {
+    return service({
+        url: '/user/' + id,
+        method: 'get'
+    })
+}
+//添加/修改用户
+export function addUser(user) {
+    return service({
+        url: '/user',
+        method: 'post',
+        data: user
+    })
+}
 //role
 export function getRoleList(searchForm) {
     return service({

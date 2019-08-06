@@ -8,88 +8,106 @@ export function getProductList(searchForm) {
         data: searchForm
     })
 }
-// export function getProdCodeById(id) {
-//     return service({
-//         url: '/prodCode/id/' + id,
-//         method: 'get',
-//     })
-// }
-// export function addProdCode(product, thirdFlag) {
-//     return service({
-//         url: '/prodCode/' + thirdFlag,
-//         method: 'post',
-//         data: product
-//     })
-// }
-// export function updateProdCode(product, thirdFlag) {
-//     return service({
-//         url: '/prodCode/' + thirdFlag,
-//         method: 'put',
-//         data: product
-//     })
-// }
-// export function switchBind(oldId, newId, codeId) {
-//     return service({
-//         url: '/prodCodes/styleId/' + oldId + '/' + newId + '/' + codeId,
-//         method: 'put',
-//     })
-// }
+//获取单个产品
+export function getProductById(id) {
+    return service({
+        url: '/product/' + id,
+        method: 'get'
+    })
+}
+//获取评审会产品
+export function getProductByReviewSeasonId(id) {
+    return service({
+        url: '/product/reviewSeasonId/' + id,
+        method: 'get'
+    })
+}
+//添加/修改产品
+export function addProduct(product) {
+    return service({
+        url: '/product',
+        method: 'post',
+        data: product
+    })
+}
+//options
+export function getPriceZoneOptions() {
+    return service({
+        url: '/priceZones/options',
+        method: 'get'
+    })
+}
+export function getPriceZoneList() {
+    return service({
+        url: '/priceZones',
+        method: 'get'
+    })
+}
+export function getMiddleTypeOptions() {
+    return service({
+        url: '/middleTypes/options',
+        method: 'get'
+    })
+}
+export function getMiddleTypeList() {
+    return service({
+        url: '/middleTypes',
+        method: 'get'
+    })
+}
+export function getSpeOptions() {
+    return service({
+        url: '/spes/options',
+        method: 'get'
+    })
+}
+export function getSpeList() {
+    return service({
+        url: '/spes',
+        method: 'get'
+    })
+}
+//param
+export function addPriceZone(xx) {
+    return service({
+        url: '/priceZone',
+        method: 'post',
+        data: xx
+    })
+}
+export function addMiddleType(xx) {
+    return service({
+        url: '/middleType',
+        method: 'post',
+        data: xx
+    })
+}
+export function addSpe(xx) {
+    return service({
+        url: '/spe',
+        method: 'post',
+        data: xx
+    })
+}
+export function getPriceZoneById(id) {
+    return service({
+        url: '/priceZone/' + id,
+        method: 'get'
+    })
+}
+export function getMiddleTypeById(id) {
+    return service({
+        url: '/middleType/' + id,
+        method: 'get'
+    })
+}
+export function getSpeById(id) {
+    return service({
+        url: '/spe/' + id,
+        method: 'get'
+    })
+}
 
-
-// //productStyle
-// export function getProdStyleList(searchForm) {
-//     return service({
-//         url: '/prodStyles',
-//         method: 'post',
-//         data: searchForm
-//     })
-// }
-// export function getProdStyleOptions(productStyle) {
-//     return service({
-//         url: '/prodStyles/options',
-//         method: 'post',
-//         data: productStyle
-//     })
-// }
-// export function getProdStyleById(id) {
-//     return service({
-//         url: '/prodStyle/id/' + id,
-//         method: 'get',
-//     })
-// }
-// export function addProdStyle(productStyle) {
-//     return service({
-//         url: '/prodStyle',
-//         method: 'post',
-//         data: productStyle
-//     })
-// }
-// export function updateProdStyle(productStyle) {
-//     return service({
-//         url: '/prodStyle',
-//         method: 'put',
-//         data: productStyle
-//     })
-// }
-// export function deleteProdStyle(id) {
-//     return service({
-//         url: '/prodStyle/' + id,
-//         method: 'delete',
-//     })
-// }
-// //记数
-// export function codeCount() {
-//     return service({
-//         url: '/prodCode/count',
-//         method: 'get',
-//     })
-// }
-// export function styleCount() {
-//     return service({
-//         url: '/prodStyle/count',
-//         method: 'get',
-//     })
-// }
 
 
 

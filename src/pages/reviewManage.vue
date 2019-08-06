@@ -39,7 +39,28 @@
           </q-tr>
           <q-tr v-show="props.expand" :props="props">
             <q-td colspan="100%">
-              <div class="text-left">This is expand slot for row above: {{ props.row.name }}.</div>
+              <div class="text-left">
+                <q-btn-group>
+                  <q-btn
+                    dense
+                    label="修改"
+                    icon="mdi-pencil"
+                    @click="openReviewDetailDialog('update', props.row.id)"
+                  />
+                  <q-btn
+                    dense
+                    label="启用"
+                    icon="mdi-check-circle"
+                    @click="switchReview(props.row.id,1)"
+                  />
+                  <q-btn
+                    dense
+                    label="关闭"
+                    icon="mdi-close-circle"
+                    @click="switchReview(props.row.id,0)"
+                  />
+                </q-btn-group>
+              </div>
             </q-td>
           </q-tr>
         </template>
@@ -58,15 +79,102 @@
             :options="columns"
             option-value="name"
           />
+          <q-btn
+            color="secondary"
+            style="margin-left:8px"
+            size="sm"
+            icon="mdi-magnify"
+            label="搜索"
+            @click="searchDetailOpened=true"
+          />
+          <q-btn
+            style="margin-left:8px"
+            icon="mdi-new-box"
+            size="sm"
+            color="primary"
+            label="新建"
+            @click="openReviewDetailDialog('add',0)"
+          ></q-btn>
         </template>
       </q-table>
     </div>
+    <q-dialog v-model="reviewDetailOpened" persistent>
+      <q-card style="width: 600px; max-width: 80vw;">
+        <q-form
+          @submit="submitReviewDialog"
+          @reset="resetReviewDialog"
+          autocorrect="off"
+          autocapitalize="off"
+          autocomplete="off"
+          spellcheck="false"
+        >
+          <q-card-section>
+            <div class="text-h6">{{dialogActiveName}}</div>
+          </q-card-section>
+          <q-card-section class="row q-col-gutter-md">
+            <q-input
+              class="col-6"
+              outlined
+              v-model.trim="review.name"
+              label="评审会名称"
+              lazy-rules
+              :rules="[ val => val && val.length > 0 || '名称不能为空']"
+              ref="name"
+            >
+              <template v-slot:prepend>
+                <q-icon name="mdi-account" />
+              </template>
+            </q-input>
+          </q-card-section>
+          <q-card-actions align="right" class="bg-white text-teal">
+            <q-btn flat label="取消" v-close-popup />
+            <q-btn color="primary" type="reset" v-if="dialogActiveName==='新增评审会'" label="重置" />
+            <q-btn color="primary" type="submit" :loading="reviewDialogLoading" label="确定" />
+          </q-card-actions>
+        </q-form>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="searchDetailOpened" persistent>
+      <q-card style="width: 600px; max-width: 80vw;">
+        <q-form
+          @submit="search"
+          @reset="resetSearchForm"
+          autocorrect="off"
+          autocapitalize="off"
+          autocomplete="off"
+          spellcheck="false"
+        >
+          <q-card-section>
+            <div class="text-h6">搜索</div>
+          </q-card-section>
+          <q-card-section class="row q-col-gutter-md">
+            <q-input class="col-6" outlined v-model.trim="searchForm.name" label="名称">
+              <template v-slot:prepend>
+                <q-icon name="mdi-account" />
+              </template>
+            </q-input>
+            <template v-slot:prepend>
+              <q-icon name="mdi-account-box-outline" />
+            </template>
+          </q-card-section>
+          <q-card-actions align="right" class="bg-white text-teal">
+            <q-btn flat label="取消" v-close-popup />
+            <q-btn color="primary" type="reset" label="重置" />
+            <q-btn color="primary" type="submit" :loading="reviewDialogLoading" label="确定" />
+          </q-card-actions>
+        </q-form>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
 <script>
 import { date } from 'quasar'
-import { getReviewSeasonList } from 'src/api/reviewManage'
+import {
+  getReviewSeasonList,
+  addReview,
+  getReviewById
+} from 'src/api/reviewManage'
 export default {
   data() {
     return {
@@ -115,10 +223,8 @@ export default {
       searchForm: {
         page: 0,
         row: 0,
-        account: '',
         name: '',
-        status: '',
-        type: ''
+        isEnable: ''
       },
       serverPagination: {
         page: 1,
@@ -127,8 +233,15 @@ export default {
         // specifying this determines pagination is server-side
       },
       serverData: [],
-      //user dialog
-      userDetailOpened: false
+      //review dialog
+      reviewDetailOpened: false,
+      dialogActiveName: '',
+      reviewDialogLoading: false,
+      review: {
+        name: '',
+        status: 1
+      },
+      searchDetailOpened: false
     }
   },
   methods: {
@@ -173,9 +286,63 @@ export default {
       this.request({
         pagination: this.serverPagination
       })
+      this.searchDetailOpened = false
     },
-    openReviewDetailDialog() {
-      this.reviewDetailOpened = true
+    //dialog
+    openReviewDetailDialog(action, id) {
+      if (action == 'add') {
+        Object.assign(this.review, this.$options.data.call(this).review)
+        this.dialogActiveName = '新增评审会'
+        this.reviewDetailOpened = true
+      } else {
+        this.dialogActiveName = '修改评审会'
+        getReviewById(id)
+          .then(response => {
+            Object.assign(this.review, response.data.data)
+          })
+          .catch(error => {})
+        this.reviewDetailOpened = true
+      }
+    },
+    resetReviewDialog() {
+      Object.assign(this.review, this.$options.data.call(this).review)
+    },
+    submitReviewDialog() {
+      this.reviewDialogLoading = true
+      if (this.dialogActiveName == '新增评审会') {
+        this.review.status = 1
+        this.review.isEnable = 1
+        this.review.isDel = 0
+      }
+      addReview(this.review)
+        .then(response => {
+          this.notify('positive', response.data.msg)
+          this.reviewDialogLoading = false
+          this.reviewDetailOpened = false
+          this.request({
+            pagination: this.serverPagination
+          })
+        })
+        .catch(error => {
+          this.reviewDialogLoading = false
+        })
+    },
+    switchReview(id, isEnable) {
+      getReviewById(id)
+        .then(response => {
+          console.log(id)
+          let review = response.data.data
+          review.isEnable = isEnable
+          addReview(review)
+            .then(response => {
+              this.notify('positive', response.data.msg)
+              this.request({
+                pagination: this.serverPagination
+              })
+            })
+            .catch(error => {})
+        })
+        .catch(error => {})
     }
   },
   mounted() {
