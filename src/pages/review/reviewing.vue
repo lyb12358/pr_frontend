@@ -8,24 +8,32 @@
       <div class="col-2">淘汰：{{tt}}</div>
       <div class="col-2">待定：{{dd}}</div>
     </div>
-    <div class="row q-col-gutter-md" style="margin-bottom:10px">
+    <div class="row" style="margin-bottom:10px">
       <q-space />
-      <div class="col-2">
-        <q-btn label="提交结果" color="primary" @click="uploadAllResult()" />
-      </div>
-      <div class="col-2">
-        <q-input dense class="no-padding" clearable color="primary" v-model="searchId" label="搜索" />
-      </div>
+      <q-btn
+        style="margin-right:10px"
+        label="提交结果"
+        dense
+        color="primary"
+        @click="uploadAllResult()"
+      />
+      <q-input
+      style="margin-right:10px"
+        dense
+        color="primary"
+        debounce="1000"
+        @input="searchProdList"
+        v-model="product.orderId"
+        label="搜索序号"
+      />
+      <q-btn style="margin-right:10px" label="重置搜索" dense color="primary" @click="resetProdList" />
     </div>
-    <div class="row q-col-gutter-md">
+    <!-- <div class="row q-col-gutter-md">
       <div class="col-4" v-for="(prod, index) in prodList" :key="index">
-        <q-card class="my-card" v-if="searchId==''||(index+1)==searchId">
-          <q-img
-            :src="api + '/image/' + prod.id + '/' + prod.thumbnail"
-            @click="openProdDetailDialog(index,prod)"
-          >
+        <q-card class="my-card" v-if="searchId==''||prod.orderId==searchId">
+          <q-img :src="checkImage(prod)" @click="openProdDetailDialog(prod.orderId,prod)">
             <div class="absolute-bottom row items-center no-wrap" style="height:40px">
-              <div class="col text-subtitle2">{{"序号:"+(index+1)+" "+prod.name}}</div>
+              <div class="col text-subtitle2">{{"序号:"+prod.orderId+" "+prod.name}}</div>
             </div>
           </q-img>
           <q-card-actions align="right" class>
@@ -35,27 +43,77 @@
                 label="通过"
                 :color="getResultByProdId(prod.id)==1?'blue':'white'"
                 :text-color="getResultByProdId(prod.id)==1?'white':'black'"
-                @click="changeResult(1,prod.id)"
+                @click="changeResult(1,prod)"
               />
               <q-btn
                 dense
                 label="淘汰"
                 :color="getResultByProdId(prod.id)==2?'red':'white'"
                 :text-color="getResultByProdId(prod.id)==2?'white':'black'"
-                @click="changeResult(2,prod.id)"
+                @click="changeResult(2,prod)"
               />
               <q-btn
                 dense
                 label="待定"
                 :color="getResultByProdId(prod.id)==3?'orange':'white'"
                 :text-color="getResultByProdId(prod.id)==3?'white':'black'"
-                @click="changeResult(3,prod.id)"
+                @click="changeResult(3,prod)"
               />
             </q-btn-group>
-            <!-- {{getResultByProdId(prod.id)}} -->
           </q-card-actions>
         </q-card>
       </div>
+    </div>-->
+    <div class="row q-col-gutter-md">
+      <q-table
+        :data="prodList"
+        :columns="columns"
+        row-key="orderId"
+        grid
+        hide-header
+        :pagination.sync="pagination"
+        class="my-table"
+      >
+        <template v-slot:item="props">
+          <div class="col-4 q-pa-xs">
+            <q-card class="my-card">
+              <q-img
+                :src="checkImage(props.row)"
+                @click="openProdDetailDialog(props.row.orderId,props.row)"
+              >
+                <div class="absolute-bottom row items-center no-wrap" style="height:40px">
+                  <div class="col text-subtitle2">{{"序号:"+props.row.orderId+" "+props.row.name}}</div>
+                </div>
+              </q-img>
+              <q-card-actions align="right" class>
+                <q-btn-group>
+                  <q-btn
+                    dense
+                    label="通过"
+                    :color="getResultByProdId(props.row.id)==1?'blue':'white'"
+                    :text-color="getResultByProdId(props.row.id)==1?'white':'black'"
+                    @click="changeResult(1,props.row)"
+                  />
+                  <q-btn
+                    dense
+                    label="淘汰"
+                    :color="getResultByProdId(props.row.id)==2?'red':'white'"
+                    :text-color="getResultByProdId(props.row.id)==2?'white':'black'"
+                    @click="changeResult(2,props.row)"
+                  />
+                  <q-btn
+                    dense
+                    label="待定"
+                    :color="getResultByProdId(props.row.id)==3?'orange':'white'"
+                    :text-color="getResultByProdId(props.row.id)==3?'white':'black'"
+                    @click="changeResult(3,props.row)"
+                  />
+                </q-btn-group>
+              </q-card-actions>
+            </q-card>
+          </div>
+        </template>
+      </q-table>
     </div>
     <q-dialog
       v-model="prodDetailOpened"
@@ -67,6 +125,24 @@
         <q-card-section class="row items-center">
           <!-- <q-space /> -->
           <q-btn icon="close" flat round dense v-close-popup />
+        </q-card-section>
+        <q-card-section class="row items-center">
+          <q-btn
+            icon="mdi-arrow-left-bold"
+            class="text-white"
+            flat
+            round
+            @click="changeProdLeft"
+            style="font-size: 3em;margin-top:270px;"
+          />
+          <q-btn
+            icon="mdi-arrow-right-bold"
+            class="text-white"
+            flat
+            round
+            @click="changeProdRight"
+            style="font-size: 3em;margin-top:270px;margin-left:484px;"
+          />
         </q-card-section>
       </q-card>
       <div class="q-pa-xs row items-start q-gutter-xs">
@@ -101,10 +177,16 @@
                 <div class="text-bold">零售价：</div>
                 <div class>{{this.singleProd.retailPrice}}</div>
               </div>
-              <div class="row col-3" :v-if="this.$store.getters['user/userInfo'].type!=2">
+              <div class="row col-3" :v-if="roleType">
                 <div class="text-bold">成本价：</div>
                 <div class>{{this.singleProd.costPrice}}</div>
               </div>
+            </div>
+          </q-card-section>
+          <q-card-section>
+            <div class="row">
+              <div class="text-bold">材质：</div>
+              <div class>{{this.singleProd.prodMat}}</div>
             </div>
           </q-card-section>
           <q-separator inset />
@@ -114,23 +196,39 @@
                 label="通过"
                 :color="getResultByProdId(singleProd.id)==1?'blue':'white'"
                 :text-color="getResultByProdId(singleProd.id)==1?'white':'black'"
-                @click="changeResult(1,singleProd.id)"
+                @click="changeResult(1,singleProd)"
               />
               <q-btn
                 label="淘汰"
                 :color="getResultByProdId(singleProd.id)==2?'red':'white'"
                 :text-color="getResultByProdId(singleProd.id)==2?'white':'black'"
-                @click="changeResult(2,singleProd.id)"
+                @click="changeResult(2,singleProd)"
               />
               <q-btn
                 label="待定"
                 :color="getResultByProdId(singleProd.id)==3?'orange':'white'"
                 :text-color="getResultByProdId(singleProd.id)==3?'white':'black'"
-                @click="changeResult(3,singleProd.id)"
+                @click="changeResult(3,singleProd)"
               />
             </q-btn-group>
             <q-space />
-            <q-btn flat label="关闭" v-close-popup />
+            <q-btn color="red" label="关闭" v-close-popup />
+            <q-btn color="primary" label="同价格带产品">
+              <q-menu transition-show="jump-up" transition-hide="jump-down">
+                <q-list style="min-width: 100px">
+                  <q-item
+                    clickable
+                    v-close-popup
+                    v-for="(prod, index) in priceZoneList"
+                    :key="index"
+                    @click="openProdDetailDialog(prod.orderId,prod)"
+                  >
+                    <q-item-section>{{"序号："+prod.orderId+" "+prod.name}}</q-item-section>
+                  </q-item>
+                </q-list>
+              </q-menu>
+            </q-btn>
+
             <q-btn color="orange" icon="mdi-cart" @click="joinCompare(singleProd)">加入对比</q-btn>
             <q-btn icon="mdi-message-bulleted" color="info" @click="openOpinionDialog">产品评论</q-btn>
           </q-card-actions>
@@ -206,7 +304,10 @@
 </template>
 
 <script>
-import { getProductByReviewSeasonId } from 'src/api/productManage'
+import {
+  getProductByReviewSeasonId,
+  getProductList
+} from 'src/api/productManage'
 import {
   getReviewResultByUserId,
   getReviewResultByProdId,
@@ -215,6 +316,7 @@ import {
   getReviewResultBySeasonIdAndUserId,
   getReviewResultBySeasonIdAndProdId,
   addReviewResult,
+  addSingleReviewResult,
   addResultComment,
   getUserReviewStatus
 } from 'src/api/reviewManage'
@@ -227,6 +329,111 @@ import {
 export default {
   data() {
     return {
+      pagination: {
+        rowsPerPage: 9
+        // rowsNumber: xx if getting data from a server
+      },
+      filter: '',
+      columns: [
+        { name: 'id', label: 'id', field: 'id' },
+        { name: 'orderId', label: 'orderId', field: 'orderId' },
+        {
+          name: 'name',
+          label: '名称',
+          align: 'left',
+          field: 'name'
+        },
+        {
+          name: 'orderId',
+          label: '序号',
+          align: 'center',
+          field: 'orderId'
+        },
+        {
+          name: 'thumbnail',
+          label: '简图',
+          align: 'center',
+          field: 'thumbnail'
+        },
+        {
+          name: 'devCode',
+          label: '研发编号',
+          align: 'center',
+          field: 'devCode'
+        },
+        {
+          name: 'reviewSeasonName',
+          label: '评审会',
+          align: 'center',
+          field: 'reviewSeasonName'
+        },
+        {
+          name: 'priceZoneName',
+          label: '价格带',
+          align: 'center',
+          field: 'priceZoneName'
+        },
+        {
+          name: 'speName',
+          label: '规格',
+          align: 'center',
+          field: 'speName'
+        },
+        {
+          name: 'prodMat',
+          label: '材质',
+          align: 'center',
+          field: 'prodMat'
+        },
+        {
+          name: 'middleTypeName',
+          label: '中类',
+          align: 'center',
+          field: 'middleTypeName'
+        },
+        {
+          name: 'numModel',
+          label: '件数',
+          align: 'center',
+          field: 'numModel'
+        },
+        {
+          name: 'retailPrice',
+          label: '零售价',
+          align: 'center',
+          field: 'retailPrice'
+        },
+        {
+          name: 'supplyPrice',
+          label: '供应价',
+          align: 'center',
+          field: 'supplyPrice'
+        },
+        {
+          name: 'costPrice',
+          label: '成本价',
+          align: 'center',
+          field: 'costPrice'
+        },
+        {
+          name: 'status',
+          label: '状态',
+          align: 'center',
+          field: 'status'
+        },
+        {
+          name: 'gmtCreate',
+          label: '添加时间',
+          align: 'center',
+          field: 'gmtCreate'
+        },
+        {
+          name: 'gmtModified',
+          label: '修改时间',
+          align: 'center',
+          field: 'gmtModified'
+        }
+      ],
       commentDialogOpened: false,
       isReview: true,
       api: process.env.API,
@@ -271,10 +478,24 @@ export default {
         prodId: '',
         comment: ''
       },
-      compareProdList: []
+      compareProdList: [],
+      priceZoneList: [],
+      calList: [],
+      product: {
+        page: 1,
+        row: 1000,
+        orderId: '',
+        middleTypeId: '',
+        speId: '',
+        priceZoneId: '',
+        reviewSeasonId: ''
+      }
     }
   },
   computed: {
+    roleType() {
+      return this.$store.getters['user/userInfo'].type != 2
+    },
     userId() {
       return this.$store.getters['user/userInfo'].id
     },
@@ -322,15 +543,62 @@ export default {
     }
   },
   methods: {
+    searchProdList() {
+      this.product.reviewSeasonId = parseInt(this.$route.query.rs)
+      getProductList(this.product)
+        .then(response => {
+          let data = response.data.data
+          this.prodList = data.rows
+        })
+        .catch(error => {})
+    },
+    resetProdList() {
+      this.product.orderId = ''
+      this.getAllProduct()
+    },
+    checkImage(prod) {
+      if (prod.thumbnail != '' && prod.thumbnail != null) {
+        return this.api + '/image/' + prod.id + '/' + prod.thumbnail
+      } else {
+        return '/statics/noImage.jpg'
+      }
+    },
     notify(color, message) {
       this.$q.notify({
         message: message,
         color: color
       })
     },
+    changeProdLeft() {
+      if (this.detailIndex == 0) {
+        this.detailIndex = this.prodList.length - 1
+      } else {
+        this.detailIndex--
+      }
+      let newProd = this.prodList[this.detailIndex]
+      this.openProdDetailDialog(this.detailIndex, newProd)
+    },
+    changeProdRight() {
+      if (this.detailIndex == this.prodList.length - 1) {
+        this.detailIndex = 0
+      } else {
+        this.detailIndex++
+      }
+      let newProd = this.prodList[this.detailIndex]
+      this.openProdDetailDialog(this.detailIndex, newProd)
+    },
     openProdDetailDialog(index, prod) {
       this.singleProd = prod
       this.detailIndex = index
+      this.priceZoneList = []
+      for (let i = 0; i < this.prodList.length; i++) {
+        if (
+          this.prodList[i].priceZoneId == prod.priceZoneId &&
+          this.prodList[i].id != prod.id
+        ) {
+          this.priceZoneList.push(this.prodList[i])
+        }
+      }
       this.prodDetailOpened = true
     },
     openOpinionDialog() {
@@ -359,6 +627,7 @@ export default {
         .then(response => {
           let data = response.data.data
           this.prodList = data
+          this.calList = data
         })
         .catch(error => {})
     },
@@ -370,13 +639,17 @@ export default {
         }
       }
     },
-    changeResult(value, id) {
+    changeResult(value, prod) {
       for (let i = 0; i < this.userResultList.length; i++) {
-        if (this.userResultList[i].prodId == id) {
+        if (this.userResultList[i].prodId == prod.id) {
           let xx = this.userResultList[i]
           xx.status = value
           this.userResultList.splice(i, 1, xx)
-          //Vue.set(this.userResultList, i, this.userResultList[i])
+          addSingleReviewResult(xx)
+            .then(response => {
+              console.log('提交' + prod.id)
+            })
+            .catch(error => {})
         }
       }
     },
@@ -408,16 +681,26 @@ export default {
         .catch(error => {})
     },
     singleProdStyle() {
-      return {
-        background:
-          'url(' +
-          this.api +
-          '/image/' +
-          this.singleProd.id +
-          '/' +
-          this.singleProd.thumbnail +
-          ') no-repeat',
-        height: '768px'
+      if (
+        this.singleProd.thumbnail != '' &&
+        this.singleProd.thumbnail != null
+      ) {
+        return {
+          background:
+            'url(' +
+            this.api +
+            '/image/' +
+            this.singleProd.id +
+            '/' +
+            this.singleProd.thumbnail +
+            ') no-repeat',
+          height: '768px'
+        }
+      } else {
+        return {
+          background: 'url(/statics/noImage.jpg) no-repeat center',
+          height: '760px'
+        }
       }
     },
     getComment() {
@@ -498,5 +781,7 @@ export default {
 
 <style lang="stylus" scoped>
 .my-card
+  width 100%
+.my-table
   width 100%
 </style>

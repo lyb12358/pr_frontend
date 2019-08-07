@@ -45,7 +45,7 @@
               v-for="(prod, index) in compareList"
               :key="index"
               :name="index"
-              :img-src="api + '/image/' + prod.id + '/' + prod.thumbnail"
+              :img-src="checkImage(prod)"
             />
           </q-carousel>
         </div>
@@ -82,10 +82,16 @@
                 <div class="text-bold">零售价：</div>
                 <div class>{{this.singleProd.retailPrice}}</div>
               </div>
-              <div class="row col-3" :v-if="this.$store.getters['user/userInfo'].type!=2">
+              <div class="row col-3" :v-if="roleType">
                 <div class="text-bold">成本价：</div>
                 <div class>{{this.singleProd.costPrice}}</div>
               </div>
+            </div>
+          </q-card-section>
+          <q-card-section>
+            <div class="row">
+              <div class="text-bold">材质：</div>
+              <div class>{{this.singleProd.prodMat}}</div>
             </div>
           </q-card-section>
           <q-separator inset />
@@ -116,6 +122,9 @@ export default {
     }
   },
   computed: {
+    roleType() {
+      return this.$store.getters['user/userInfo'].type != 2
+    },
     compareList() {
       return this.$store.getters['user/compareProdList']
     },
@@ -129,6 +138,13 @@ export default {
     }
   },
   methods: {
+    checkImage(prod) {
+      if (prod.thumbnail != '' && prod.thumbnail != null) {
+        return this.api + '/image/' + prod.id + '/' + prod.thumbnail
+      } else {
+        return '/statics/noImage.jpg'
+      }
+    },
     notify(color, message) {
       this.$q.notify({
         message: message,

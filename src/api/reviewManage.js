@@ -83,6 +83,14 @@ export function addReviewResult(list) {
         data: list
     })
 }
+//添加修改单个评审结果
+export function addSingleReviewResult(rr) {
+    return service({
+        url: '/reviewResult',
+        method: 'post',
+        data: rr
+    })
+}
 //获取用户评审会是否已评
 export function getUserReviewStatus(id1, id2) {
     return service({

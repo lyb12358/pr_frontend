@@ -329,6 +329,7 @@ export default {
     openUserDetailDialog(action, id) {
       if (action == 'add') {
         Object.assign(this.user, this.$options.data.call(this).user)
+        this.user.id = ''
         this.dialogActiveName = '新增用户'
         this.userDetailOpened = true
       } else {

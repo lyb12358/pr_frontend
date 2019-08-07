@@ -691,24 +691,15 @@ export default {
       name: { required, maxLength: maxLength(30) },
       orderId: { required, integer, maxLength: maxLength(30) },
       retailPrice: {
-        required,
-        decimal,
-        minValue: minValue(0),
-        maxValue: maxValue(999999)
+        required
       },
       supplyPrice: {
-        required,
-        decimal,
-        minValue: minValue(0),
-        maxValue: maxValue(999999)
+        required
       },
       costPrice: {
-        required,
-        decimal,
-        minValue: minValue(0),
-        maxValue: maxValue(999999)
+        required
       },
-      numModel: { integer },
+      numModel: {},
       reviewSeasonId: { required },
       middleTypeId: { required },
       priceZoneId: { required },

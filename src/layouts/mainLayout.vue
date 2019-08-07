@@ -18,6 +18,7 @@
       :width="200"
       :breakpoint="1000"
       show-if-above
+      :v-if="roleType"
       bordered
       content-class="bg-grey-2"
     >
@@ -94,6 +95,11 @@ export default {
     return {
       leftDrawerOpen: this.$q.platform.is.desktop,
       menuList
+    }
+  },
+  computed: {
+    roleType() {
+      return this.$store.getters['user/userInfo'].type != 2
     }
   },
   methods: {
