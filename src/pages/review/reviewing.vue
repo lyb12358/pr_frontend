@@ -9,7 +9,7 @@
       <div class="col-2">待定：{{dd}}</div>
     </div>
     <div class="row" style="margin-bottom:10px">
-      <q-space />
+      <q-btn style="margin-right:10px" label="搜索未评选产品" dense color="teal" @click="getNotReview" />
       <q-btn
         style="margin-right:10px"
         label="提交结果"
@@ -17,8 +17,18 @@
         color="primary"
         @click="uploadAllResult()"
       />
+      <q-space />
       <q-input
-      style="margin-right:10px"
+        style="margin-right:10px"
+        dense
+        color="primary"
+        debounce="1000"
+        type="number"
+        v-model="pagination.page"
+        label="输入页数跳转"
+      />
+      <q-input
+        style="margin-right:10px"
         dense
         color="primary"
         debounce="1000"
@@ -73,6 +83,7 @@
         hide-header
         :pagination.sync="pagination"
         class="my-table"
+        :rows-per-page-options="[9, 20,50]"
       >
         <template v-slot:item="props">
           <div class="col-4 q-pa-xs">
@@ -113,6 +124,33 @@
             </q-card>
           </div>
         </template>
+        <template v-slot:bottom="props" class="row flex-center q-py-sm print-hide">
+          <q-space />
+          <q-btn
+            round
+            dense
+            size="sm"
+            icon="mdi-undo"
+            color="secondary"
+            class="q-mr-sm"
+            :disable="props.isFirstPage"
+            @click="pagination.page--"
+          />
+          <div
+            class="q-mr-sm"
+            style="font-size: small"
+          >{{ '第'+props.pagination.page+'页' }} / {{ '第'+props.pagesNumber+'页' }}</div>
+
+          <q-btn
+            round
+            dense
+            size="sm"
+            icon="mdi-redo"
+            color="secondary"
+            :disable="props.isLastPage"
+            @click="pagination.page++"
+          />
+        </template>
       </q-table>
     </div>
     <q-dialog
@@ -129,7 +167,7 @@
         <q-card-section class="row items-center">
           <q-btn
             icon="mdi-arrow-left-bold"
-            class="text-white"
+            class="text-black"
             flat
             round
             @click="changeProdLeft"
@@ -137,7 +175,7 @@
           />
           <q-btn
             icon="mdi-arrow-right-bold"
-            class="text-white"
+            class="text-black"
             flat
             round
             @click="changeProdRight"
@@ -177,9 +215,9 @@
                 <div class="text-bold">零售价：</div>
                 <div class>{{this.singleProd.retailPrice}}</div>
               </div>
-              <div class="row col-3" :v-if="roleType">
+              <div class="row col-3">
                 <div class="text-bold">成本价：</div>
-                <div class>{{this.singleProd.costPrice}}</div>
+                <div class v-show="this.roleType">{{this.singleProd.costPrice}}</div>
               </div>
             </div>
           </q-card-section>
@@ -330,6 +368,7 @@ export default {
   data() {
     return {
       pagination: {
+        page: 1,
         rowsPerPage: 9
         // rowsNumber: xx if getting data from a server
       },
@@ -543,6 +582,21 @@ export default {
     }
   },
   methods: {
+    getNotReview() {
+      let xx = []
+      for (let i = 0; i < this.userResultList.length; i++) {
+        if (this.userResultList[i].status == 4) {
+          let prodId = this.userResultList[i].prodId
+          for (let i = 0; i < this.calList.length; i++) {
+            if (this.calList[i].id == prodId) {
+              xx.push(this.calList[i])
+            }
+          }
+        }
+      }
+
+      this.prodList = xx
+    },
     searchProdList() {
       this.product.reviewSeasonId = parseInt(this.$route.query.rs)
       getProductList(this.product)
@@ -553,6 +607,7 @@ export default {
         .catch(error => {})
     },
     resetProdList() {
+      this.pagination.page = 1
       this.product.orderId = ''
       this.getAllProduct()
     },
@@ -570,33 +625,42 @@ export default {
       })
     },
     changeProdLeft() {
-      if (this.detailIndex == 0) {
-        this.detailIndex = this.prodList.length - 1
+      if (this.detailIndex == 1) {
+        this.detailIndex = this.calList.length
       } else {
-        this.detailIndex--
+        this.detailIndex = this.detailIndex - 1
       }
-      let newProd = this.prodList[this.detailIndex]
-      this.openProdDetailDialog(this.detailIndex, newProd)
+      for (let i = 0; i < this.calList.length; i++) {
+        if (this.calList[i].orderId == this.detailIndex) {
+          let newProd = this.calList[i]
+          this.openProdDetailDialog(this.detailIndex, newProd)
+        }
+      }
     },
     changeProdRight() {
-      if (this.detailIndex == this.prodList.length - 1) {
-        this.detailIndex = 0
+      if (this.detailIndex == this.calList.length) {
+        this.detailIndex = 1
       } else {
-        this.detailIndex++
+        this.detailIndex = this.detailIndex + 1
       }
-      let newProd = this.prodList[this.detailIndex]
-      this.openProdDetailDialog(this.detailIndex, newProd)
+      for (let i = 0; i < this.calList.length; i++) {
+        if (this.calList[i].orderId == this.detailIndex) {
+          let newProd = this.calList[i]
+          this.openProdDetailDialog(this.detailIndex, newProd)
+        }
+      }
     },
     openProdDetailDialog(index, prod) {
+      console.log(index)
       this.singleProd = prod
       this.detailIndex = index
       this.priceZoneList = []
-      for (let i = 0; i < this.prodList.length; i++) {
+      for (let i = 0; i < this.calList.length; i++) {
         if (
-          this.prodList[i].priceZoneId == prod.priceZoneId &&
-          this.prodList[i].id != prod.id
+          this.calList[i].priceZoneId == prod.priceZoneId &&
+          this.calList[i].id != prod.id
         ) {
-          this.priceZoneList.push(this.prodList[i])
+          this.priceZoneList.push(this.calList[i])
         }
       }
       this.prodDetailOpened = true
@@ -640,6 +704,9 @@ export default {
       }
     },
     changeResult(value, prod) {
+      if (this.isReview) {
+        return
+      }
       for (let i = 0; i < this.userResultList.length; i++) {
         if (this.userResultList[i].prodId == prod.id) {
           let xx = this.userResultList[i]
@@ -693,13 +760,13 @@ export default {
             this.singleProd.id +
             '/' +
             this.singleProd.thumbnail +
-            ') no-repeat',
-          height: '768px'
+            ') no-repeat center',
+          height: '700px'
         }
       } else {
         return {
           background: 'url(/statics/noImage.jpg) no-repeat center',
-          height: '760px'
+          height: '700px'
         }
       }
     },
@@ -775,6 +842,7 @@ export default {
     this.checkUserStatus()
     this.getAllUser()
     this.$store.commit('user/SetRs', this.$route.query.rs)
+    console.log(this.roleType)
   }
 }
 </script>

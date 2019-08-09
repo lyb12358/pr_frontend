@@ -69,6 +69,7 @@
         hide-header
         :pagination.sync="pagination"
         class="my-table"
+        :rows-per-page-options="[9, 20,50]"
       >
         <template v-slot:item="props">
           <div class="col-4 q-pa-xs">

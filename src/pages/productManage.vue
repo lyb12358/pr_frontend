@@ -757,6 +757,7 @@ export default {
       this.$v.product.$reset()
       if (action == 'add') {
         Object.assign(this.product, this.$options.data.call(this).product)
+        this.product.id = ''
         this.dialogActiveName = '新增产品'
         this.productDetailOpened = true
       } else {

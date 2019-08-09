@@ -141,7 +141,7 @@ module.exports = function (ctx) {
           API: JSON.stringify('/api')
         }
         : { // and on build (production):
-          API: JSON.stringify('https://ims-backend.beyond-itservice.com')
+          API: JSON.stringify('http://11.12.1.164:8080')
         }
     },
 

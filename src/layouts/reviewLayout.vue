@@ -30,7 +30,7 @@
       transition-show="slide-up"
       transition-hide="slide-down"
     >
-      <q-card style="height:768px">
+      <q-card style="height:700px">
         <div class>
           <q-carousel
             swipeable
@@ -39,7 +39,7 @@
             thumbnails
             infinite
             @input="changeImage"
-            style="height:768px"
+            style="height:700px"
           >
             <q-carousel-slide
               v-for="(prod, index) in compareList"
@@ -82,9 +82,9 @@
                 <div class="text-bold">零售价：</div>
                 <div class>{{this.singleProd.retailPrice}}</div>
               </div>
-              <div class="row col-3" :v-if="roleType">
+              <div class="row col-3">
                 <div class="text-bold">成本价：</div>
-                <div class>{{this.singleProd.costPrice}}</div>
+                <div class v-show="this.roleType">{{this.singleProd.costPrice}}</div>
               </div>
             </div>
           </q-card-section>
@@ -105,7 +105,7 @@
     </q-dialog>
 
     <q-page-container>
-      <keep-alive include="reviewing">
+      <keep-alive>
         <router-view></router-view>
       </keep-alive>
     </q-page-container>
