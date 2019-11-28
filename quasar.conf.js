@@ -141,7 +141,7 @@ module.exports = function (ctx) {
           API: JSON.stringify('/api')
         }
         : { // and on build (production):
-          API: JSON.stringify('http://11.12.1.164:8080')
+          API: JSON.stringify('http://11.0.2.2:8080')
         }
     },
 
