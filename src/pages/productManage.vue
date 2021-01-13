@@ -1,3 +1,4 @@
+/* eslint-disable */
 <template>
   <q-page>
     <div class="q-pa-sm">
@@ -29,7 +30,7 @@
             <q-td key="orderId" :props="props">{{ props.row.orderId }}</q-td>
             <q-td key="thumbnail" :props="props">
               <img
-                :src="thumbnailCheck(props.row.id,props.row.thumbnail)"
+                :src="thumbnailCheck(props.row.id, props.row.thumbnail)"
                 style="height: 80px; width: 80px;"
               />
             </q-td>
@@ -45,9 +46,13 @@
             <q-td key="costPrice" :props="props">{{ props.row.costPrice }}</q-td>
             <q-td key="status" :props="props">
               <q-icon
-                :name="props.row.status==1?'mdi-check-circle':'mdi-close-circle'"
+                :name="
+                  props.row.status == 1
+                    ? 'mdi-check-circle'
+                    : 'mdi-close-circle'
+                "
                 size="1.5rem"
-                :color="props.row.status==1?'positive':'negative'"
+                :color="props.row.status == 1 ? 'positive' : 'negative'"
               />
             </q-td>
             <q-td key="gmtCreate" :props="props">{{ formatDate(props.row.gmtCreate) }}</q-td>
@@ -95,7 +100,7 @@
             size="sm"
             icon="mdi-magnify"
             label="搜索"
-            @click="searchDetailOpened=true"
+            @click="searchDetailOpened = true"
           />
           <q-btn
             style="margin-left:6px"
@@ -103,7 +108,7 @@
             size="sm"
             color="primary"
             label="新建"
-            @click="openProductDetailDialog('add',0)"
+            @click="openProductDetailDialog('add', 0)"
           ></q-btn>
           <q-btn-dropdown
             color="accent"
@@ -130,6 +135,26 @@
               </q-item>
             </q-list>
           </q-btn-dropdown>
+          <q-btn-dropdown
+            color="primary"
+            style="margin-left:6px"
+            size="sm"
+            label="导入产品"
+            icon="mdi-file-import"
+          >
+            <q-list>
+              <q-item clickable v-close-popup @click="downloadImportModel('reviewImportModel')">
+                <q-item-section>
+                  <q-item-label>模板下载</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup @click="batchFileUploadDialog = true">
+                <q-item-section>
+                  <q-item-label>导入</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
         </template>
       </q-table>
     </div>
@@ -144,7 +169,7 @@
           spellcheck="false"
         >
           <q-card-section>
-            <div class="text-h6">{{dialogActiveName}}</div>
+            <div class="text-h6">{{ dialogActiveName }}</div>
           </q-card-section>
           <q-card-section class="row q-col-gutter-md">
             <q-input
@@ -186,13 +211,15 @@
             <q-select
               class="col-6"
               outlined
+              use-input
+              @filter="reviewSeasonFilter"
               v-model="product.reviewSeasonId"
               label="所属评审会"
               emit-value
               map-options
               error-message="必选"
               :error="$v.product.reviewSeasonId.$error"
-              :options="reviewSeasonOptions"
+              :options="reviewSeasonOptionsFilter"
             >
               <template v-slot:prepend>
                 <q-icon name="mdi-format-list-bulleted" />
@@ -201,13 +228,15 @@
             <q-select
               class="col-6"
               outlined
+              use-input
+              @filter="priceZoneFilter"
               v-model="product.priceZoneId"
               label="价格带"
               emit-value
               map-options
               error-message="必选"
               :error="$v.product.priceZoneId.$error"
-              :options="priceZoneOptions"
+              :options="priceZoneOptionsFilter"
             >
               <template v-slot:prepend>
                 <q-icon name="mdi-format-list-bulleted" />
@@ -216,13 +245,15 @@
             <q-select
               class="col-6"
               outlined
+              use-input
+              @filter="speFilter"
               v-model="product.speId"
               label="规格"
               emit-value
               map-options
               error-message="必选"
               :error="$v.product.speId.$error"
-              :options="speOptions"
+              :options="speOptionsFilter"
             >
               <template v-slot:prepend>
                 <q-icon name="mdi-format-list-bulleted" />
@@ -231,13 +262,15 @@
             <q-select
               class="col-6"
               outlined
+              use-input
+              @filter="middleTypeFilter"
               v-model="product.middleTypeId"
               label="中类"
               emit-value
               map-options
               error-message="必选"
               :error="$v.product.middleTypeId.$error"
-              :options="middleTypeOptions"
+              :options="middleTypeOptionsFilter"
             >
               <template v-slot:prepend>
                 <q-icon name="mdi-format-list-bulleted" />
@@ -318,7 +351,7 @@
           </q-card-section>
           <q-card-actions align="right" class="bg-white text-teal">
             <q-btn flat label="取消" v-close-popup />
-            <q-btn color="primary" type="reset" v-if="dialogActiveName==='新增产品'" label="重置" />
+            <q-btn color="primary" type="reset" v-if="dialogActiveName === '新增产品'" label="重置" />
             <q-btn color="primary" type="submit" :loading="productDialogLoading" label="确定" />
           </q-card-actions>
         </q-form>
@@ -343,6 +376,71 @@
                 <q-icon name="mdi-account" />
               </template>
             </q-input>
+            <q-input class="col-6" outlined v-model.trim="searchForm.orderId" label="序号">
+              <template v-slot:prepend>
+                <q-icon name="mdi-numeric" />
+              </template>
+            </q-input>
+            <q-select
+              class="col-6"
+              outlined
+              use-input
+              v-model="searchForm.reviewSeasonId"
+              label="所属评审会"
+              emit-value
+              map-options
+              @filter="reviewSeasonFilter"
+              :options="reviewSeasonOptionsFilter"
+            >
+              <template v-slot:prepend>
+                <q-icon name="mdi-format-list-bulleted" />
+              </template>
+            </q-select>
+            <q-select
+              class="col-6"
+              outlined
+              use-input
+              @filter="priceZoneFilter"
+              v-model="searchForm.priceZoneId"
+              label="价格带"
+              emit-value
+              map-options
+              :options="priceZoneOptionsFilter"
+            >
+              <template v-slot:prepend>
+                <q-icon name="mdi-format-list-bulleted" />
+              </template>
+            </q-select>
+            <q-select
+              class="col-6"
+              outlined
+              use-input
+              @filter="speFilter"
+              v-model="searchForm.speId"
+              label="规格"
+              emit-value
+              map-options
+              :options="speOptionsFilter"
+            >
+              <template v-slot:prepend>
+                <q-icon name="mdi-format-list-bulleted" />
+              </template>
+            </q-select>
+            <q-select
+              class="col-6"
+              outlined
+              use-input
+              @filter="middleTypeFilter"
+              v-model="searchForm.middleTypeId"
+              label="中类"
+              emit-value
+              map-options
+              :options="middleTypeOptionsFilter"
+            >
+              <template v-slot:prepend>
+                <q-icon name="mdi-format-list-bulleted" />
+              </template>
+            </q-select>
             <template v-slot:prepend>
               <q-icon name="mdi-account-box-outline" />
             </template>
@@ -359,14 +457,14 @@
     <q-dialog v-model="optionDialogOpened" persistent>
       <q-card style="width: 600px; max-width: 80vw;">
         <q-card-section class="row items-center">
-          <div class="text-h6">{{optionTitle}}</div>
+          <div class="text-h6">{{ optionTitle }}</div>
           <q-btn
             icon="mdi-new-box"
             color="primary"
             label="新建"
             style="margin-left:8px"
             dense
-            @click="openParamDialog('add',0)"
+            @click="openParamDialog('add', 0)"
           />
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
@@ -383,7 +481,7 @@
                     label="修改"
                     dense
                     color="orange"
-                    @click="openParamDialog('update',props.row.id)"
+                    @click="openParamDialog('update', props.row.id)"
                   ></q-btn>
                 </q-td>
               </q-tr>
@@ -404,7 +502,7 @@
           spellcheck="false"
         >
           <q-card-section>
-            <div class="text-h6">{{paramDialogActiveName}}</div>
+            <div class="text-h6">{{ paramDialogActiveName }}</div>
           </q-card-section>
           <q-card-section class="row q-col-gutter-md">
             <q-input
@@ -413,7 +511,7 @@
               v-model.trim="param.name"
               label="名称"
               lazy-rules
-              :rules="[ val => val && val.length > 0 || '名称不能为空']"
+              :rules="[val => (val && val.length > 0) || '名称不能为空']"
               ref="name"
             >
               <template v-slot:prepend>
@@ -423,7 +521,7 @@
           </q-card-section>
           <q-card-actions align="right" class="bg-white text-teal">
             <q-btn flat label="取消" v-close-popup />
-            <q-btn color="primary" type="reset" v-if="paramDialogActiveName==='新增'" label="重置" />
+            <q-btn color="primary" type="reset" v-if="paramDialogActiveName === '新增'" label="重置" />
             <q-btn color="primary" type="submit" label="确定" />
           </q-card-actions>
         </q-form>
@@ -440,13 +538,37 @@
         <q-card-section>
           <q-uploader
             ref="imageUpload"
-            :url="api+imageUploadUrl"
+            :url="api + imageUploadUrl"
             accept=".jpg, .jpeg, .png"
-            :headers="[{name: 'id', value: this.expandId}]"
+            :headers="[{ name: 'id', value: this.expandId }]"
             style="max-width: 300px"
             @uploaded="imageUploaded"
             @failed="imageUploadFail"
             @added="addImageFile"
+            field-name="file"
+            name="file"
+          />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+    <!-- upload xls -->
+    <q-dialog v-model="batchFileUploadDialog" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <div class="text-h6">批量导入</div>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
+        </q-card-section>
+        <q-card-section>
+          <q-uploader
+            ref="batchFileUpload"
+            :url="api + batchFileUploadUrl"
+            accept=".xls, .xlsx"
+            :headers="[{ name: 'batchType', value: this.batchType }]"
+            style="max-width: 300px"
+            @uploaded="batchFileUploaded"
+            @failed="batchFileUploadedFail"
+            @added="addbatchFile"
             field-name="file"
             name="file"
           />
@@ -473,7 +595,8 @@ import {
   addSpe,
   getPriceZoneById,
   getMiddleTypeById,
-  getSpeById
+  getSpeById,
+  importModelDownload
 } from 'src/api/productManage'
 import { getReviewOptions } from 'src/api/reviewManage'
 import {
@@ -490,6 +613,10 @@ export default {
   data() {
     return {
       api: process.env.API,
+      batchFileUploadUrl: '/product/batchUpload',
+      batchFileUploadDialog: false,
+      importLoading: false,
+      batchType: '',
       //table
       columns: [
         {
@@ -605,7 +732,12 @@ export default {
         page: 0,
         row: 0,
         name: '',
-        status: ''
+        status: '',
+        speId: '',
+        middleTypeId: '',
+        priceZoneId: '',
+        reviewSeasonId: '',
+        orderId: ''
       },
       serverPagination: {
         page: 1,
@@ -641,6 +773,11 @@ export default {
       priceZoneOptions: [],
       speOptions: [],
       reviewSeasonOptions: [],
+      //filter
+      middleTypeOptionsFilter: [],
+      priceZoneOptionsFilter: [],
+      speOptionsFilter: [],
+      reviewSeasonOptionsFilter: [],
       searchDetailOpened: false,
       //option
       optionDialogOpened: false,
@@ -709,6 +846,54 @@ export default {
     }
   },
   methods: {
+    reviewSeasonFilter(val, update, abort) {
+      update(() => {
+        if (val === '') {
+          this.reviewSeasonOptionsFilter = this.reviewSeasonOptions
+        } else {
+          const needle = val.toLowerCase()
+          this.reviewSeasonOptionsFilter = this.reviewSeasonOptions.filter(
+            v => v.label.indexOf(needle) > -1
+          )
+        }
+      })
+    },
+    priceZoneFilter(val, update, abort) {
+      update(() => {
+        if (val === '') {
+          this.priceZoneOptionsFilter = this.priceZoneOptions
+        } else {
+          const needle = val.toLowerCase()
+          this.priceZoneOptionsFilter = this.priceZoneOptions.filter(
+            v => v.label.indexOf(needle) > -1
+          )
+        }
+      })
+    },
+    speFilter(val, update, abort) {
+      update(() => {
+        if (val === '') {
+          this.speOptionsFilter = this.speOptions
+        } else {
+          const needle = val.toLowerCase()
+          this.speOptionsFilter = this.speOptions.filter(
+            v => v.label.indexOf(needle) > -1
+          )
+        }
+      })
+    },
+    middleTypeFilter(val, update, abort) {
+      update(() => {
+        if (val === '') {
+          this.middleTypeOptionsFilter = this.middleTypeOptions
+        } else {
+          const needle = val.toLowerCase()
+          this.middleTypeOptionsFilter = this.middleTypeOptions.filter(
+            v => v.label.indexOf(needle) > -1
+          )
+        }
+      })
+    },
     notify(color, message) {
       this.$q.notify({
         message: message,
@@ -802,6 +987,7 @@ export default {
       getPriceZoneOptions()
         .then(response => {
           this.priceZoneOptions = response.data.data
+          this.priceZoneOptionsFilter = this.priceZoneOptions
         })
         .catch(error => {})
     },
@@ -809,6 +995,7 @@ export default {
       getMiddleTypeOptions()
         .then(response => {
           this.middleTypeOptions = response.data.data
+          this.middleTypeOptionsFilter = this.middleTypeOptions
         })
         .catch(error => {})
     },
@@ -816,6 +1003,7 @@ export default {
       getReviewOptions()
         .then(response => {
           this.reviewSeasonOptions = response.data.data
+          this.reviewSeasonOptionsFilter = this.reviewSeasonOptions
         })
         .catch(error => {})
     },
@@ -823,6 +1011,7 @@ export default {
       getSpeOptions()
         .then(response => {
           this.speOptions = response.data.data
+          this.speOptionsFilter = this.speOptions
         })
         .catch(error => {})
     },
@@ -964,6 +1153,67 @@ export default {
       } else {
         return 'statics/noImage.jpg'
       }
+    },
+    //upload
+    addbatchFile(files) {
+      if (files[0].size > 5 * 1024 * 1024) {
+        this.$refs.batchFileUpload.reset()
+        this.notify('warning', '文件不能大于5MB')
+      }
+    },
+    batchFileUpload() {
+      this.importLoading = true
+      this.$refs.batchFileUpload.upload()
+    },
+    batchFileUploadCancel() {
+      this.$refs.batchFileUpload.reset()
+      this.batchFileUploadDialog = false
+    },
+    batchFileUploaded(info) {
+      let response = JSON.parse(info.xhr.response)
+      if (response.code == 20000) {
+        this.notify('positive', response.msg)
+        this.$refs.batchFileUpload.reset()
+        this.batchFileUploadDialog = false
+        this.request({
+          pagination: this.serverPagination
+        })
+        this.importLoading = false
+      } else {
+        this.notify('negative', response.msg)
+        this.$refs.batchFileUpload.reset()
+        this.importLoading = false
+      }
+    },
+    // when it has encountered error while uploading
+    batchFileUploadedFail(info) {
+      let response = JSON.parse(info.xhr.response)
+      this.notify('negative', response.data.msg)
+      this.importLoading = false
+    },
+    //download importModel
+    downloadImportModel(name) {
+      importModelDownload(name).then(response => {
+        if (name == 'reviewImportModel') {
+          this.fileDownload(response.data, '评审产品导入模板.xls')
+        }
+      })
+    },
+    // public method to download file
+    fileDownload(data, name) {
+      if (!data) {
+        return
+      }
+      let url = window.URL.createObjectURL(new Blob([data]))
+      let link = document.createElement('a')
+      link.style.display = 'none'
+      link.href = url
+      link.setAttribute('download', name)
+      document.body.appendChild(link)
+      link.click()
+      // release url object
+      URL.revokeObjectURL(link.href)
+      document.body.removeChild(link)
     }
   },
   mounted() {
