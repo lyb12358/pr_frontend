@@ -1,7 +1,12 @@
 <template>
   <q-page padding>
     <div class="row q-pa-md q-gutter-md">
-      <q-card class="my-card col-4" v-for="(rs, index) in serverData" :key="index">
+      <q-card
+        class="my-card col-4"
+        v-for="(rs, index) in serverData"
+        :key="index"
+        v-show="rs.isEnable"
+      >
         <q-card-section class="bg-primary text-white">
           <div class="text-h6">{{rs.name}}</div>
           <div class="text-subtitle2">{{rs.isEnable==1?"正常":"关闭"}}</div>
