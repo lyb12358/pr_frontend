@@ -132,7 +132,7 @@ module.exports = function(ctx) {
           }
         : {
             // and on build (production):
-            API: JSON.stringify("http://11.0.3.2:9090")
+            API: JSON.stringify("http://11.0.5.4:9090")
           }
     },
 
